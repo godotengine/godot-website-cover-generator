@@ -1,0 +1,55 @@
+<html>
+<head>
+    <title>Article cover generator - Godot Engine</title>
+    <link rel="stylesheet" href="style.css" />
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link
+		href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;500;800&display=swap"
+		rel="stylesheet"
+	/>
+</head>
+<body>
+
+    <script src="script.js"></script>
+
+    <div class="content">
+        <div class="toolbar">
+            <h3>Configuration</h3>
+
+            <div class="toolbar-item">
+                <label for="background-image">Featured image</label>
+                <input type="file" accept="image/*" id="background-image" />
+            </div>
+
+            <div class="toolbar-item">
+                <label for="title-text">Title text</label>
+                <input type="text" id="title-text" value="" />
+            </div>
+
+            <div class="toolbar-item">
+                <label for="super-text">Supertext</label>
+                <input type="text" id="super-text" value="" />
+            </div>
+
+            <div class="toolbar-item">
+                <button id="download-image">Download</button>
+            </div>
+
+
+            <h3>Debug options</h3>
+
+            <div class="toolbar-item">
+                <label for="show-vercel">Show Vercel output</label>
+                <input type="checkbox" id="show-vercel" />
+            </div>
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="generator"></canvas>
+            <canvas id="render-target" style="display:none;"></canvas>
+        </div>
+    </div>
+
+</body>
+</html>
