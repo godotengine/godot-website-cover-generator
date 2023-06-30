@@ -149,8 +149,8 @@ class PreviewGenerator {
 
         // Render the overlay as a gradient from top-right to bottom-left.
         const overlayGradient = this.ctx.createLinearGradient(this.previewWidth, 0, 0, this.previewHeight);
-        overlayGradient.addColorStop(0, "rgba(21, 79, 159, 0.1)");
-        overlayGradient.addColorStop(0.85, "rgba(9, 13, 30, 0.4)");
+        overlayGradient.addColorStop(0, "rgba(32, 79, 159, 0.1)");
+        overlayGradient.addColorStop(0.85, "rgba(14, 13, 30, 0.4)");
 
         this.ctx.fillStyle = overlayGradient;
         this.ctx.fillRect(0, 0, this.previewWidth, this.previewHeight);
@@ -191,8 +191,8 @@ class PreviewGenerator {
             const logoWidth = 0.36 * this.previewWidth;
             const logoHeight = this.godotLogo.height * (logoWidth / this.godotLogo.width);
 
-            this.ctx.shadowBlur = 60;
-            this.ctx.shadowColor = "rgb(0 0 0 / 0.3)";
+            this.ctx.shadowBlur = 140;
+            this.ctx.shadowColor = "rgb(0 0 0 / 0.4)";
             this.ctx.shadowOffsetX = 0;
             this.ctx.shadowOffsetY = 0;
 

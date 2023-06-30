@@ -1,0 +1,84 @@
+:root {
+    --background-color: #f9f9f9;
+    --text-color: #343434;
+
+    --button-normal-color: #2b314c;
+    --button-hover-color: #444451;
+    --button-active-color: #171721;
+    --button-text-color: #fefefe;
+}
+
+/* GENERAL LAYOUT. */
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-family: sans-serif;
+}
+
+.content {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 24px;
+    padding: 16px 24px;
+}
+
+/* TOOLBAR STYLING. */
+
+.toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.toolbar h3 {
+    margin: 0;
+}
+
+.toolbar-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.toolbar-item--oneline {
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.toolbar-item label {
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.toolbar-item input[type=file] {
+    cursor: pointer;
+}
+
+.toolbar-item button {
+    background: var(--button-normal-color);
+    border: none;
+    color: var(--button-text-color);
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 8px 16px;
+}
+.toolbar-item button:hover {
+    background: var(--button-hover-color);
+}
+.toolbar-item button:active {
+    background: var(--button-active-color);
+}
+
+/* CANVAS STYLING. */
+
+.canvas-container {
+    max-height: 540px;
+    aspect-ratio: 16 / 9;
+}
+
+.canvas-container > canvas {
+    width: 100%;
+    height: 100%;
+}
