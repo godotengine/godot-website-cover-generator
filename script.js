@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
     const generator = new PreviewGenerator();
     generator.init();
+
+    generator.testVercel();
 });
 
 class PreviewGenerator {
@@ -39,7 +41,7 @@ class PreviewGenerator {
         this.titleText = "";
         this.superText = "";
 
-        // TODO: Remove when matched.
+        // TODO: Remove when matched and tested.
         this.vercelOutput = null;
         this.showVercel = false;
     }
@@ -120,13 +122,6 @@ class PreviewGenerator {
     testVercel() {
         this._loadImage("assets/output-vercel.png", (image) => {
             this.vercelOutput = image;
-            this.render();
-        });
-    }
-
-    testCover() {
-        this._loadImage("assets/test-cover.webp", (image) => {
-            this.coverImage = image;
             this.render();
         });
     }
