@@ -1,8 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     const generator = new PreviewGenerator();
     generator.init();
-
-    generator.testVercel();
 });
 
 class PreviewGenerator {
@@ -40,10 +38,6 @@ class PreviewGenerator {
         this.coverImage = null;
         this.titleText = "";
         this.superText = "";
-
-        // TODO: Remove when matched and tested.
-        this.vercelOutput = null;
-        this.showVercel = false;
     }
 
     init() {
@@ -108,22 +102,8 @@ class PreviewGenerator {
             this._saveRender();
         });
 
-        // TODO: REMOVE
-        const showVercel_toggle = document.getElementById("show-vercel");
-        showVercel_toggle.addEventListener("change", () => {
-            this.showVercel = showVercel_toggle.checked;
-            this.render();
-        });
-
         // Do the first render.
         this.render();
-    }
-
-    testVercel() {
-        this._loadImage("assets/output-vercel.png", (image) => {
-            this.vercelOutput = image;
-            this.render();
-        });
     }
 
     render() {
@@ -197,11 +177,6 @@ class PreviewGenerator {
             this.ctx.shadowOffsetY = 0;
 
             this.ctx.drawImage(this.godotLogo, this.previewWidth - paddingSize - logoWidth, paddingSize, logoWidth, logoHeight);
-        }
-
-        // TODO: REMOVE
-        if (this.showVercel && this.vercelOutput) {
-            this.ctx.drawImage(this.vercelOutput, 0, 0, this.previewWidth, this.previewHeight);
         }
     }
 
