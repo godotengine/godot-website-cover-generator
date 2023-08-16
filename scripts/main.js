@@ -30,6 +30,11 @@ class PreviewGenerator {
          */
         this.godotLogo = null;
 
+        // State parameters.
+
+        this.imageDragged = false;
+        this.imageDraggedLast = [0, 0];
+
         // Dynamic parameters.
 
         /**
@@ -38,6 +43,17 @@ class PreviewGenerator {
         this.coverImage = null;
         this.titleText = "";
         this.superText = "";
+
+        this.clearColor = "";
+        this.coverImageScale = 1.0;
+        this.coverImageOffset = [0, 0];
+
+        // Helpers.
+
+        this.numberFormatter = new Intl.NumberFormat("en", {
+            "minimumFractionDigits": 3,
+            "useGrouping": false
+        });
     }
 
     init() {
@@ -64,49 +80,194 @@ class PreviewGenerator {
         });
 
         // Connect to the toolbar panel to react on changes.
+        this._initForm();
+        // Connect to mouse events to react to changes.
+        this._initEvents();
 
+        // Do the first render.
+        this.render();
+    }
+
+    _initForm() {
         const backgroundImage_selector = document.getElementById("background-image");
         backgroundImage_selector.addEventListener("change", () => {
             const selectedFiles = backgroundImage_selector.files;
             if (selectedFiles.length === 0) {
                 this.coverImage = null;
+                this._fitCoverImage();
                 this.render();
             } else {
                 const imageFile = selectedFiles[0];
                 createImageBitmap(imageFile)
                     .then((res) => {
                         this.coverImage = res;
+                        this._fitCoverImage();
                         this.render();
                     })
                     .catch((err) => {
                         this.coverImage = null;
+                        this._fitCoverImage();
                         this.render();
                     });
             }
         });
+        const backgroundImage_fit = document.getElementById("background-image-fit");
+        backgroundImage_fit.addEventListener("click", () => {
+            this._fitCoverImage();
+            this.render();
+        });
 
         const titleText_input = document.getElementById("title-text");
-        titleText_input.addEventListener("change", () => {
+        titleText_input.addEventListener("input", () => {
             this.titleText = titleText_input.value;
             this.render();
         });
 
         const superText_input = document.getElementById("super-text");
-        superText_input.addEventListener("change", () => {
+        superText_input.addEventListener("input", () => {
             this.superText = superText_input.value;
             this.render();
+        });
+
+        const clearColor_input = document.getElementById("clear-color");
+        clearColor_input.addEventListener("input", () => {
+            this.clearColor = clearColor_input.value;
+            this.render();
+        });
+
+        const backgroundImage_scale = document.getElementById("background-image-scale");
+        backgroundImage_scale.addEventListener("input", () => {
+            this._updateCoverImageScale();
+        });
+        const backgroundImage_scaleReset = document.getElementById("background-image-scale-reset");
+        backgroundImage_scaleReset.addEventListener("click", () => {
+            this._setCoverImageScale(1.0);
+        });
+
+        const backgroundImage_offsetX = document.getElementById("background-image-offset-x");
+        backgroundImage_offsetX.addEventListener("input", () => {
+            this._updateCoverImageOffset();
+        });
+        const backgroundImage_offsetY = document.getElementById("background-image-offset-y");
+        backgroundImage_offsetY.addEventListener("input", () => {
+            this._updateCoverImageOffset();
+        });
+        const backgroundImage_offsetReset = document.getElementById("background-image-offset-reset");
+        backgroundImage_offsetReset.addEventListener("click", () => {
+            this._setCoverImageOffset(0, 0);
         });
 
         const downloadImage_button = document.getElementById("download-image");
         downloadImage_button.addEventListener("click", () => {
             this._saveRender();
         });
+    }
 
-        // Do the first render.
+    _initEvents() {
+        // Dragging over canvas to reposition the image.
+
+        document.addEventListener("mousedown", (event) => {
+            if (event.target !== this.previewCanvas) {
+                return;
+            }
+
+            this.imageDragged = true;
+            this.imageDraggedLast = [ event.clientX, event.clientY ];
+            event.preventDefault();
+        });
+        document.addEventListener("mouseup", () => {
+            if (this.imageDragged) {
+                this.imageDragged = false;
+                this.imageDraggedLast = [0, 0];
+            }
+        });
+        document.addEventListener("mousemove", (event) => {
+            if (!this.imageDragged) {
+                return;
+            }
+
+            const scaleFactor = this._getPreviewPageScale() / this.coverImageScale;
+            const nextOffsetX = this.coverImageOffset[0] + (event.clientX - this.imageDraggedLast[0]) * scaleFactor;
+            const nextOffsetY = this.coverImageOffset[1] + (event.clientY - this.imageDraggedLast[1]) * scaleFactor;
+            this.imageDraggedLast = [ event.clientX, event.clientY ];
+
+            this._setCoverImageOffset(nextOffsetX, nextOffsetY);
+        });
+
+        // Scrolling over canvas to scale/zoom the image.
+
+        this.previewCanvas.addEventListener("wheel", (event) => {
+            event.preventDefault();
+
+            let scaleFactor = this._getPreviewPageScale() / this.coverImageScale;
+            const centerX = (event.clientX - this.previewCanvas.offsetLeft) * scaleFactor - this.coverImageOffset[0];
+            const centerY = (event.clientY - this.previewCanvas.offsetTop) * scaleFactor - this.coverImageOffset[1];
+
+            const oldOffsetX = (this.coverImageOffset[0] + centerX) / scaleFactor;
+            const oldOffsetY = (this.coverImageOffset[1] + centerY) / scaleFactor;
+
+            this._setCoverImageScale(this.coverImageScale / (1.0 + event.deltaY / 1000));
+
+            scaleFactor = this._getPreviewPageScale() / this.coverImageScale;
+            this._setCoverImageOffset(oldOffsetX * scaleFactor - centerX, oldOffsetY * scaleFactor - centerY);
+        });
+    }
+
+    _setCoverImageScale(value) {
+        const backgroundImage_scale = document.getElementById("background-image-scale");
+        backgroundImage_scale.value = value;
+
+        this._updateCoverImageScale();
+    }
+
+    _updateCoverImageScale() {
+        const backgroundImage_scale = document.getElementById("background-image-scale");
+        const backgroundImage_scaleText = document.getElementById("background-image-scale-value");
+
+        this.coverImageScale = parseFloat(backgroundImage_scale.value);
+        backgroundImage_scaleText.textContent = this.numberFormatter.format(this.coverImageScale);
         this.render();
     }
 
+    _setCoverImageOffset(valueX, valueY) {
+        const backgroundImage_offsetX = document.getElementById("background-image-offset-x");
+        const backgroundImage_offsetY = document.getElementById("background-image-offset-y");
+        backgroundImage_offsetX.value = this.numberFormatter.format(valueX);
+        backgroundImage_offsetY.value = this.numberFormatter.format(valueY);
+
+        this._updateCoverImageOffset();
+    }
+
+    _updateCoverImageOffset() {
+        const backgroundImage_offsetX = document.getElementById("background-image-offset-x");
+        const backgroundImage_offsetY = document.getElementById("background-image-offset-y");
+
+        this.coverImageOffset[0] = parseFloat(backgroundImage_offsetX.value);
+        this.coverImageOffset[1] = parseFloat(backgroundImage_offsetY.value);
+        this.render();
+    }
+
+    _fitCoverImage() {
+        if (!this.coverImage) {
+            this._setCoverImageScale(1.0);
+            this._setCoverImageOffset(0, 0);
+            return;
+        }
+
+        const fittingScale = this.previewWidth / this.coverImage.width;
+        this._setCoverImageScale(fittingScale);
+        this._setCoverImageOffset(0, (this.previewHeight / fittingScale - this.coverImage.height) / 2);
+    }
+
+    _getPreviewPageScale() {
+        return this.previewWidth / this.previewCanvas.offsetWidth;
+    }
+
     render() {
+        window.requestAnimationFrame(this._renderRoutine.bind(this));
+    }
+
+    _renderRoutine() {
         if (!this.previewCanvas || !this.ctx) {
             return;
         }
@@ -122,9 +283,15 @@ class PreviewGenerator {
         this.ctx.font = "10px sans-serif";
         this.ctx.letterSpacing = "0px";
 
+        // Render the clear color.
+        this.ctx.fillStyle = this.clearColor;
+        this.ctx.fillRect(0, 0, this.previewWidth, this.previewHeight);
+
         // Render the cover image.
         if (this.coverImage) {
-            this.ctx.drawImage(this.coverImage, 0, 0, this.previewWidth, this.previewHeight);
+            this.ctx.scale(this.coverImageScale, this.coverImageScale);
+            this.ctx.drawImage(this.coverImage, 0, 0, this.coverImage.width, this.coverImage.height, this.coverImageOffset[0], this.coverImageOffset[1], this.coverImage.width, this.coverImage.height);
+            this.ctx.resetTransform();
         }
 
         // Render the overlay as a gradient from top-right to bottom-left.

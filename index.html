@@ -20,7 +20,10 @@
 
             <div class="toolbar-item">
                 <label for="background-image">Featured image</label>
-                <input type="file" accept="image/*" id="background-image" />
+                <div class="toolbar-item-controls">
+                    <input type="file" accept="image/*" id="background-image" />
+                    <button id="background-image-fit">Fit</button>
+                </div>
             </div>
 
             <div class="toolbar-item">
@@ -32,6 +35,37 @@
                 <label for="super-text">Supertext</label>
                 <input type="text" id="super-text" value="" />
             </div>
+
+            <div class="toolbar-spacer"></div>
+
+            <h3>Fine tuning</h3>
+
+            <div class="toolbar-item toolbar-item--oneline">
+                <label for="clear-color">Clear color</label>
+                <input type="color" id="clear-color" value="#000000" />
+            </div>
+
+            <div class="toolbar-item">
+                <label for="background-image-scale">Image scale</label>
+                <div class="toolbar-item-controls">
+                    <input type="range" id="background-image-scale" min="0.25" max="6.0" step="0.001" value="1.0" />
+                    <span id="background-image-scale-value">1.000</span>
+                    <button id="background-image-scale-reset">Reset</button>
+                </div>
+            </div>
+
+            <div class="toolbar-item">
+                <label for="background-image-offset-x">Image offset</label>
+                <div class="toolbar-item-controls">
+                    <div>
+                        <input type="number" id="background-image-offset-x" style="max-width: 100px;" value="0.000" />
+                        <input type="number" id="background-image-offset-y" style="max-width: 100px;" value="0.000" />
+                    </div>
+                    <button id="background-image-offset-reset">Reset</button>
+                </div>
+            </div>
+
+            <div class="toolbar-spacer"></div>
 
             <div class="toolbar-item">
                 <button id="download-image">Download</button>

@@ -41,10 +41,6 @@ body {
     flex-direction: column;
     gap: 8px;
 }
-.toolbar-item--oneline {
-    flex-direction: row;
-    justify-content: space-between;
-}
 
 .toolbar-item label {
     cursor: pointer;
@@ -69,6 +65,28 @@ body {
 }
 .toolbar-item button:active {
     background: var(--button-active-color);
+}
+
+.toolbar-item--oneline {
+    flex-direction: row;
+    align-items: center;
+}
+.toolbar-item--oneline label {
+    flex: 1;
+}
+
+.toolbar-item-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.toolbar-item-controls :first-child {
+    flex: 1;
+}
+
+.toolbar-item-controls button {
+    font-size: 12px;
+    padding: 4px 10px;
 }
 
 /* CANVAS STYLING. */
