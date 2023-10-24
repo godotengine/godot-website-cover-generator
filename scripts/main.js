@@ -43,6 +43,7 @@ class PreviewGenerator {
         this.coverImage = null;
         this.titleText = "";
         this.superText = "";
+        this.generatedFilename = "";
 
         this.clearColor = "";
         this.coverImageScale = 1.0;
@@ -83,6 +84,8 @@ class PreviewGenerator {
         this._initForm();
         // Connect to mouse events to react to changes.
         this._initEvents();
+        // Update the download filename for the first time.
+        this._updateFilename();
 
         // Do the first render.
         this.render();
@@ -120,12 +123,14 @@ class PreviewGenerator {
         const titleText_input = document.getElementById("title-text");
         titleText_input.addEventListener("input", () => {
             this.titleText = titleText_input.value;
+            this._updateFilename();
             this.render();
         });
 
         const superText_input = document.getElementById("super-text");
         superText_input.addEventListener("input", () => {
             this.superText = superText_input.value;
+            this._updateFilename();
             this.render();
         });
 
@@ -211,6 +216,13 @@ class PreviewGenerator {
             scaleFactor = this._getPreviewPageScale() / this.coverImageScale;
             this._setCoverImageOffset(oldOffsetX * scaleFactor - centerX, oldOffsetY * scaleFactor - centerY);
         });
+    }
+
+    _updateFilename() {
+        this._generateFilename();
+
+        const filenameLabel = document.getElementById("download-filename");
+        filenameLabel.textContent = this.generatedFilename;
     }
 
     _setCoverImageScale(value) {
@@ -361,6 +373,40 @@ class PreviewGenerator {
         image.src = imagePath;
     }
 
+    _preprocessFilenamePart(inString) {
+        const cleanupRegex = /([^\p{L}0-9]+)/gui;
+        const diacriticRegex = /\p{Diacritic}/gui;
+
+        let outString = inString
+            .trim()
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(diacriticRegex, "")
+            .replace(cleanupRegex, "-");
+
+        return outString;
+    }
+
+    _generateFilename() {
+        // Normalize and sanitize supertext and title.
+        let superPrefix = this._preprocessFilenamePart(this.superText);
+        let titlePostfix = this._preprocessFilenamePart(this.titleText);
+
+        if (superPrefix === "" && titlePostfix === "") {
+            this.generatedFilename = "image.webp";
+            return;
+        }
+
+        this.generatedFilename = superPrefix;
+        if (titlePostfix !== "") {
+            if (this.generatedFilename !== "") {
+                this.generatedFilename += "-";
+            }
+            this.generatedFilename += titlePostfix;
+        }
+        this.generatedFilename += ".webp";
+    }
+
     _saveRender() {
         if (!this.previewCanvas || !this.targetCanvas) {
             return;
@@ -372,7 +418,7 @@ class PreviewGenerator {
 
         const imageData = this.targetCanvas.toDataURL("image/webp", 0.95);
         const fakeAnchor = document.createElement("A");
-        fakeAnchor.setAttribute("download", "image.webp");
+        fakeAnchor.setAttribute("download", this.generatedFilename);
         fakeAnchor.setAttribute("href", imageData);
         fakeAnchor.click();
     }

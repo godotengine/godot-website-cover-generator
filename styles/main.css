@@ -1,6 +1,7 @@
 :root {
     --background-color: #f9f9f9;
     --text-color: #343434;
+    --text-faint-color: #777f89;
 
     --button-normal-color: #2b314c;
     --button-hover-color: #444451;
@@ -87,6 +88,13 @@ body {
 .toolbar-item-controls button {
     font-size: 12px;
     padding: 4px 10px;
+}
+
+.toolbar-filename-label {
+    color: var(--text-faint-color);
+    cursor: help;
+    font-size: 14px;
+    text-align: right;
 }
 
 /* CANVAS STYLING. */
