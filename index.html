@@ -1,4 +1,4 @@
-<html>
+﻿<html>
 <head>
     <title>Article cover generator - Godot Engine</title>
     <link rel="stylesheet" href="styles/normalize.css" />
@@ -73,10 +73,25 @@
             </div>
         </div>
 
-        <div class="canvas-container">
-            <canvas id="generator"></canvas>
-            <canvas id="render-target" style="display:none;"></canvas>
+        <div class="editor">
+            <div class="canvas-container">
+                <canvas id="generator"></canvas>
+                <canvas id="render-target" style="display:none;"></canvas>
+            </div>
+            <div class="editor-hint">
+                <img src="assets/ui/pointer.png" heigth="24" width="24" />
+                <span>Click and drag to adjust the image</span>
+                <span></span>
+                <img src="assets/ui/mouse-middle.png" heigth="24" width="24" />
+                <span>Use the scrollwheel to scale the image</span>
+            </div>
         </div>
+    </div>
+
+    <div class="credits">
+        Godot Logo by <a href="https://github.com/godotengine/godot/blob/master/LOGO_LICENSE.txt" target="_blank">Andrea Calabró</a>
+        ●
+        Assets by <a href="https://kenney.nl/" target="_blank">Kenney</a>
     </div>
 
 </body>

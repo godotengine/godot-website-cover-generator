@@ -25,6 +25,18 @@ body {
     padding: 16px 24px;
 }
 
+.credits {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    background: var(--background-color);
+    border-radius: 4px 0 0 0;
+    color: var(--text-faint-color);
+    font-size: 12px;
+    padding: 2px 4px;
+    text-align: right;
+}
+
 /* TOOLBAR STYLING. */
 
 .toolbar {
@@ -95,6 +107,23 @@ body {
     cursor: help;
     font-size: 14px;
     text-align: right;
+}
+
+/* EDITOR AREA STYLING. */
+
+.editor {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.editor-hint {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 4px;
+    font-size: 14px;
 }
 
 /* CANVAS STYLING. */
