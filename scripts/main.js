@@ -4,6 +4,8 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 class PreviewGenerator {
+    static DEBOUNCE_TIME_MS = 500;
+
     constructor() {
         /**
          * @type HTMLCanvasElement
@@ -55,6 +57,8 @@ class PreviewGenerator {
             "minimumFractionDigits": 3,
             "useGrouping": false
         });
+
+        this._debounceTimerId = -1;
     }
 
     init() {
@@ -122,27 +126,22 @@ class PreviewGenerator {
 
         const titleText_input = document.getElementById("title-text");
         titleText_input.addEventListener("input", () => {
-            this.titleText = titleText_input.value;
-            this._updateFilename();
-            this.render();
+            this._debounceUpdateAndRender();
         });
 
         const superText_input = document.getElementById("super-text");
         superText_input.addEventListener("input", () => {
-            this.superText = superText_input.value;
-            this._updateFilename();
-            this.render();
+            this._debounceUpdateAndRender();
         });
 
         const clearColor_input = document.getElementById("clear-color");
         clearColor_input.addEventListener("input", () => {
-            this.clearColor = clearColor_input.value;
-            this.render();
+            this._debounceUpdateAndRender();
         });
 
         const backgroundImage_scale = document.getElementById("background-image-scale");
         backgroundImage_scale.addEventListener("input", () => {
-            this._updateCoverImageScale();
+            this._debounceUpdateAndRender();
         });
         const backgroundImage_scaleReset = document.getElementById("background-image-scale-reset");
         backgroundImage_scaleReset.addEventListener("click", () => {
@@ -151,7 +150,7 @@ class PreviewGenerator {
 
         const backgroundImage_offsetX = document.getElementById("background-image-offset-x");
         backgroundImage_offsetX.addEventListener("input", () => {
-            this._updateCoverImageOffset();
+            this._debounceUpdateAndRender();
         });
         const backgroundImage_offsetY = document.getElementById("background-image-offset-y");
         backgroundImage_offsetY.addEventListener("input", () => {
@@ -357,6 +356,34 @@ class PreviewGenerator {
 
             this.ctx.drawImage(this.godotLogo, this.previewWidth - paddingSize - logoWidth, paddingSize, logoWidth, logoHeight);
         }
+    }
+
+    _debounceUpdateAndRender() {
+        if (this._debounceTimerId >= 0) {
+            clearTimeout(this._debounceTimerId);
+        }
+        this._debounceTimerId = setTimeout(() => {
+            this._debounceTimerId = -1;
+            this._updateAndRender();
+        }, PreviewGenerator.DEBOUNCE_TIME_MS);
+    }
+
+    _updateAndRender() {
+        const titleText_input = document.getElementById("title-text");
+        this.titleText = titleText_input.value;
+
+        const superText_input = document.getElementById("super-text");
+        this.superText = superText_input.value;
+
+        this._updateFilename();
+
+        const clearColor_input = document.getElementById("clear-color");
+        this.clearColor = clearColor_input.value;
+
+        this._updateCoverImageScale();
+        this._updateCoverImageOffset();
+
+        this.render();
     }
 
     /**
