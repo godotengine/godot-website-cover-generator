@@ -1,8 +1,8 @@
-﻿<html>
+<html>
 <head>
     <title>Article cover generator - Godot Engine</title>
-    <link rel="stylesheet" href="styles/normalize.css" />
-    <link rel="stylesheet" href="styles/main.css" />
+    <link rel="stylesheet" href="normalize.css" />
+    <link rel="stylesheet" href="main.css" />
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 	<link
@@ -12,7 +12,7 @@
 </head>
 <body>
 
-    <script src="scripts/main.js"></script>
+    <script src="main.js"></script>
 
     <div class="content">
         <div class="toolbar">
@@ -34,6 +34,13 @@
             <div class="toolbar-item">
                 <label for="super-text">Supertext</label>
                 <input type="text" id="super-text" value="" />
+                <label>Preset supertexts</label>
+                <div class="toolbar-item-controls">
+                    <button id="preset-super-1">Progress report</button>
+                    <button id="preset-super-2">Dev snapshot</button>
+                    <button id="preset-super-3">Maintenance release</button>
+                    <button id="preset-super-4">Release candidate</button>
+                </div>
             </div>
 
             <div class="toolbar-spacer"></div>
