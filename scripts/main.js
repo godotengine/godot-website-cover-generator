@@ -31,6 +31,7 @@ class PreviewGenerator {
          * @type Image
          */
         this.godotLogo = null;
+        this.includeGodotLogo = true;
 
         // State parameters.
 
@@ -131,6 +132,11 @@ class PreviewGenerator {
 
         const superText_input = document.getElementById("super-text");
         superText_input.addEventListener("input", () => {
+            this._debounceUpdateAndRender();
+        });
+
+        const includeGodotLogo_input = document.getElementById("include-godot-logo");
+        includeGodotLogo_input.addEventListener("input", () => {
             this._debounceUpdateAndRender();
         });
 
@@ -345,7 +351,7 @@ class PreviewGenerator {
         this.ctx.fillRect(paddingSize, this.previewHeight - breaklineOffset - breaklineHeight, breaklineWidth, breaklineHeight);
 
         // Render the Godot logo.
-        if (this.godotLogo) {
+        if (this.godotLogo && this.includeGodotLogo) {
             const logoWidth = 0.36 * this.previewWidth;
             const logoHeight = this.godotLogo.height * (logoWidth / this.godotLogo.width);
 
@@ -376,6 +382,9 @@ class PreviewGenerator {
         this.superText = superText_input.value;
 
         this._updateFilename();
+
+        const includeGodotLogo_input = document.getElementById("include-godot-logo");
+        this.includeGodotLogo = includeGodotLogo_input.checked;
 
         const clearColor_input = document.getElementById("clear-color");
         this.clearColor = clearColor_input.value;
