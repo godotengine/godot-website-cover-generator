@@ -171,6 +171,20 @@ class PreviewGenerator {
         downloadImage_button.addEventListener("click", () => {
             this._saveRender();
         });
+
+        // Event listeners for preset supertext buttons
+        document.getElementById("preset-super-1").addEventListener("click", () => {
+            this._setSuperText("Progress report");
+        });
+        document.getElementById("preset-super-2").addEventListener("click", () => {
+            this._setSuperText("Dev snapshot");
+        });
+        document.getElementById("preset-super-3").addEventListener("click", () => {
+            this._setSuperText("Maintenance release");
+        });
+        document.getElementById("preset-super-4").addEventListener("click", () => {
+            this._setSuperText("Release candidate");
+        });
     }
 
     _initEvents() {
@@ -458,4 +472,11 @@ class PreviewGenerator {
         fakeAnchor.setAttribute("href", imageData);
         fakeAnchor.click();
     }
+
+    _setSuperText(text) {
+        const superText_input = document.getElementById("super-text");
+        superText_input.value = text;
+        this._debounceUpdateAndRender();
+    }
+
 }
