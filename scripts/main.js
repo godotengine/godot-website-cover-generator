@@ -429,7 +429,7 @@ class PreviewGenerator {
         let titlePostfix = this._preprocessFilenamePart(this.titleText);
 
         if (superPrefix === "" && titlePostfix === "") {
-            this.generatedFilename = "image.webp";
+            this.generatedFilename = "image.jpg";
             return;
         }
 
@@ -440,7 +440,7 @@ class PreviewGenerator {
             }
             this.generatedFilename += titlePostfix;
         }
-        this.generatedFilename += ".webp";
+        this.generatedFilename += ".jpg";
     }
 
     _saveRender() {
@@ -452,7 +452,7 @@ class PreviewGenerator {
         targetContext.clearRect(0, 0, this.targetCanvas.width, this.targetCanvas.height);
         targetContext.drawImage(this.previewCanvas, 0, 0, this.targetWidth, this.targetHeight);
 
-        const imageData = this.targetCanvas.toDataURL("image/webp", 0.95);
+        const imageData = this.targetCanvas.toDataURL("image/jpeg", 0.95);
         const fakeAnchor = document.createElement("A");
         fakeAnchor.setAttribute("download", this.generatedFilename);
         fakeAnchor.setAttribute("href", imageData);
