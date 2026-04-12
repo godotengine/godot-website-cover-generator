@@ -165,3 +165,13 @@ body {
         align-items: flex-start;
     }
 }
+
+/* Specific input. */
+.gradient-alpha-factor-container-value {
+    .gradient-alpha-factor-container-value-number {
+        display: inline-block;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+        min-width: 3ch;
+    }
+}
