@@ -49,6 +49,7 @@ class PreviewGenerator {
         this.generatedFilename = "";
 
         this.clearColor = "";
+        this.gradientAlphaFactor = 1.0;
         this.coverImageScale = 1.0;
         this.coverImageOffset = [0, 0];
 
@@ -91,6 +92,8 @@ class PreviewGenerator {
         this._initEvents();
         // Update the download filename for the first time.
         this._updateFilename();
+        // Update the gradient slider.
+        this._updateGradientAlphaFactorValue();
 
         // Do the first render.
         this.render();
@@ -142,6 +145,17 @@ class PreviewGenerator {
 
         const clearColor_input = document.getElementById("clear-color");
         clearColor_input.addEventListener("input", () => {
+            this._debounceUpdateAndRender();
+        });
+
+        const gradientAlphaFactor_range = document.getElementById("gradient-alpha-factor");
+        gradientAlphaFactor_range.addEventListener("input", () => {
+            this._updateGradientAlphaFactorValue();
+            this._debounceUpdateAndRender();
+        });
+        const gradientAlphaFactor_reset = document.getElementById("gradient-alpha-factor-reset");
+        gradientAlphaFactor_reset.addEventListener("click", () => {
+            this._resetGradientAlphaFactorValue();
             this._debounceUpdateAndRender();
         });
 
@@ -244,6 +258,21 @@ class PreviewGenerator {
         filenameLabel.textContent = this.generatedFilename;
     }
 
+    _updateGradientAlphaFactorValue() {
+        const gradientAlphaFactor_range = document.getElementById("gradient-alpha-factor");
+        this.gradientAlphaFactor = gradientAlphaFactor_range.value;
+        const gradientAlphaFactor_valueNumber = document.querySelector("#gradient-alpha-factor + span.gradient-alpha-factor-container-value > span.gradient-alpha-factor-container-value-number");
+        gradientAlphaFactor_valueNumber.textContent = Math.round(this.gradientAlphaFactor * 100); 
+    }
+
+    _resetGradientAlphaFactorValue() {
+        this.gradientAlphaFactor = 1;
+        const gradientAlphaFactor_range = document.getElementById("gradient-alpha-factor");
+        gradientAlphaFactor_range.value = this.gradientAlphaFactor;
+        const gradientAlphaFactor_valueNumber = document.querySelector("#gradient-alpha-factor + span.gradient-alpha-factor-container-value > span.gradient-alpha-factor-container-value-number");
+        gradientAlphaFactor_valueNumber.textContent = Math.round(this.gradientAlphaFactor * 100); 
+    }
+
     _setCoverImageScale(value) {
         const backgroundImage_scale = document.getElementById("background-image-scale");
         backgroundImage_scale.value = value;
@@ -327,8 +356,10 @@ class PreviewGenerator {
 
         // Render the overlay as a gradient from top-right to bottom-left.
         const overlayGradient = this.ctx.createLinearGradient(this.previewWidth, 0, 0, this.previewHeight);
-        overlayGradient.addColorStop(0, "rgba(32, 79, 159, 0.1)");
-        overlayGradient.addColorStop(0.85, "rgba(14, 13, 30, 0.4)");
+        const overlayGradient1ColorStopAlpha = Math.max(Math.min(0.1 * this.gradientAlphaFactor, 1.0), 0.0);
+        const overlayGradient2ColorStopAlpha = Math.max(Math.min(0.4 * this.gradientAlphaFactor, 1.0), 0.0);
+        overlayGradient.addColorStop(0, `rgba(32, 79, 159, ${overlayGradient1ColorStopAlpha})`);
+        overlayGradient.addColorStop(0.85, `rgba(14, 13, 30, ${overlayGradient2ColorStopAlpha})`);
 
         this.ctx.fillStyle = overlayGradient;
         this.ctx.fillRect(0, 0, this.previewWidth, this.previewHeight);
@@ -341,20 +372,22 @@ class PreviewGenerator {
         // Render the title.
         const titleSize = 8 * relativeUnit;
         const titleOffset = 2 * relativeUnit + paddingSize + 0.2 * titleSize;
+        const titleMaxWidth = this.previewWidth - (paddingSize * 2);
 
         this.ctx.font = `bold ${titleSize}px 'JetBrains Mono', monospace`;
         this.ctx.letterSpacing = "0px";
         this.ctx.fillStyle = "white";
-        this.ctx.fillText(this.titleText, paddingSize, this.previewHeight - titleOffset);
+        this.ctx.fillText(this.titleText, paddingSize, this.previewHeight - titleOffset, titleMaxWidth);
 
         // Render the super text.
         const supertextSize = 3.5 * relativeUnit;
         const supertextOffset = 3 * relativeUnit + titleSize + titleOffset + 0.06 * supertextSize;
+        const supertextMaxWidth = this.previewWidth - (paddingSize + titleOffset);
 
         this.ctx.font = `bold ${supertextSize}px 'JetBrains Mono', monospace`;
         this.ctx.letterSpacing = `${1.4 * relativeUnit}px`;
         this.ctx.fillStyle = "white";
-        this.ctx.fillText(this.superText.toUpperCase(), paddingSize, this.previewHeight - supertextOffset);
+        this.ctx.fillText(this.superText.toUpperCase(), paddingSize, this.previewHeight - supertextOffset, supertextMaxWidth);
 
         // Render break line.
         const breaklineWidth = 8 * relativeUnit;
@@ -402,6 +435,7 @@ class PreviewGenerator {
 
         const clearColor_input = document.getElementById("clear-color");
         this.clearColor = clearColor_input.value;
+        this._updateGradientAlphaFactorValue();
 
         this._updateCoverImageScale();
         this._updateCoverImageOffset();

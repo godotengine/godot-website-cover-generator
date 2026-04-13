@@ -57,6 +57,25 @@
                 <input type="color" id="clear-color" value="#000000" />
             </div>
 
+            <div class="toolbar-item toolbar-item">
+                <label for="gradient-alpha-factor">Gradient alpha factor</label>
+                <div class="toolbar-item-controls">
+                    <span class="gradient-alpha-factor-container">
+                        <input
+                            type="range"
+                            id="gradient-alpha-factor"
+                            value="1"
+                            min="0"
+                            max="2"
+                            step="0.01"
+                        />
+                        <span class="gradient-alpha-factor-container-value"><span
+                                class="gradient-alpha-factor-container-value-number">100</span>&#x202F;%</span>
+                    </span>
+                    <button id="gradient-alpha-factor-reset">Reset</button>
+                </div>
+            </div>
+
             <div class="toolbar-item">
                 <label for="background-image-scale">Image scale</label>
                 <div class="toolbar-item-controls">
